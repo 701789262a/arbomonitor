@@ -12,12 +12,6 @@ pool = ThreadPool()
 
 
 def tcp():
-    q = dict()
-    with open("config") as f:
-        for line in f:
-            (key, val) = line.replace(" ", "").split("=")
-            val = val.split("#")[0]
-            q[key] = val
     port = 30630
     thread_list = []
     s = socket.socket()
