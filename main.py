@@ -37,9 +37,9 @@ def tcp():
             thread_list.append(t_c)
             thread_list[len(thread_list) - 1].start()
             n_conn = n_conn + 1
-            os.system('cls' if os.name == 'nt' else 'clear')
+            #os.system('cls' if os.name == 'nt' else 'clear')
         except socket.timeout:
-            os.system('cls' if os.name == 'nt' else 'clear')
+            #os.system('cls' if os.name == 'nt' else 'clear')
             pass
 
 
