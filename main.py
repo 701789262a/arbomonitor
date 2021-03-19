@@ -65,7 +65,7 @@ def reporter(q):
     first_time=True
     while True:
         while not q.empty():
-            if first_time:
+            if not first_time:
                 print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
             first_time=False
             q_mex=q.get()
