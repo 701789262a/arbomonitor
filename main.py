@@ -1,12 +1,12 @@
-import time
-import datetime
 import json
-import os
 import queue
 import socket
-from colorama import Fore, Style
 import threading
+import time
 from multiprocessing.pool import ThreadPool
+
+import pandas as pd
+from colorama import Fore, Style
 
 pool = ThreadPool()
 
@@ -23,8 +23,9 @@ def tcp():
     service_monitor.listen(5)
     service_monitor.settimeout(0.01)
     q = queue.Queue()
+    d = dict()
     n_conn = 0
-    t_m = threading.Thread(target=reporter,args=(q,))
+    t_m = threading.Thread(target=reporter, args=(q,))
     t_m.start()
     while True:
         try:
@@ -33,18 +34,18 @@ def tcp():
             pass
         try:
             conn, address = s.accept()
-            print("new connection at"+str(address))
-            t_c = threading.Thread(target=connection, args=(conn, address, q))
+            print("new connection at" + str(address))
+            t_c = threading.Thread(target=connection, args=(conn, address, q, d))
             thread_list.append(t_c)
             thread_list[len(thread_list) - 1].start()
             n_conn = n_conn + 1
-            #os.system('cls' if os.name == 'nt' else 'clear')
+            # os.system('cls' if os.name == 'nt' else 'clear')
         except socket.timeout:
-            #os.system('cls' if os.name == 'nt' else 'clear')
+            # os.system('cls' if os.name == 'nt' else 'clear')
             pass
 
 
-def connection(conn, addr, q):
+def connection(conn, addr, q, d):
     while True:
         try:
             byt = "ok".encode()
@@ -62,17 +63,23 @@ def connection(conn, addr, q):
 
 
 def reporter(q):
-    first_time=True
+    first_time = True
+    d = pd.DataFrame(columns=["address", "timestamp", "status", "latency"])
     while True:
         while not q.empty():
             if first_time:
                 print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
-            first_time=False
-            q_mex=q.get()
-            msg = str(json.loads(q_mex[0]))+str(q_mex[1])
-            print(msg)
-        first_time=True
-        time.sleep(1)
+            first_time = False
+            q_mex = q.get()
+            ts, status, lat, addr = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
+                json.loads(q_mex[0])["latency"], q_mex[1][0]
+            d = d.append(pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
+            msg = str(json.loads(q_mex[0])) + str(q_mex[1])
+            d[q_mex[1][0]] = str(json.loads(q_mex[0]))
+            #print("prova\t", msg)
+        print(d)
+        first_time = True
+        time.sleep(2)
 
 
 if __name__ == '__main__':
