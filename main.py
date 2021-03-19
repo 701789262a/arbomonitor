@@ -61,7 +61,7 @@ def connection(conn, addr, q):
         except BrokenPipeError:
             data = "{}"
             pass
-        q.put(data)
+        q.put([data,addr])
 
 
 def reporter(q):
