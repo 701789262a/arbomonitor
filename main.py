@@ -2,6 +2,7 @@ import json
 import queue
 import socket
 import threading
+import os
 import time
 from multiprocessing.pool import ThreadPool
 
@@ -39,9 +40,7 @@ def tcp():
             thread_list.append(t_c)
             thread_list[len(thread_list) - 1].start()
             n_conn = n_conn + 1
-            # os.system('cls' if os.name == 'nt' else 'clear')
         except socket.timeout:
-            # os.system('cls' if os.name == 'nt' else 'clear')
             pass
 
 
@@ -49,7 +48,6 @@ def connection(conn, addr, q, d):
     while True:
         try:
             byt = "ok".encode()
-            # print(conn_list[0])
             conn.send(byt)
             conn.settimeout(3)
             data = conn.recv(1024).decode('utf-8')
@@ -63,29 +61,21 @@ def connection(conn, addr, q, d):
 
 
 def reporter(q):
-    first_time = True
     d = pd.DataFrame(columns=["address", "timestamp", "status", "latency"])
     while True:
         while not q.empty():
-            if first_time:
-                print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
-            first_time = False
             q_mex = q.get()
             ts, status, lat, addr = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
                                     json.loads(q_mex[0])["latency"], q_mex[1][0]
-            print("addr", addr, "status", status)
             if not any(d.address == addr):
-                print("non presente")
                 d = d.append(
                     pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
             else:
                 d.loc[d["address"] == addr, ["timestamp", "status", "latency"]] = [ts, status, lat]
-            msg = str(json.loads(q_mex[0])) + str(q_mex[1])
-            # d[q_mex[1][0]] = str(json.loads(q_mex[0]))
-            # print("prova\t", msg)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
         print(d)
-        first_time = True
-        time.sleep(2)
+        time.sleep(1)
 
 
 if __name__ == '__main__':
