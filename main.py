@@ -75,6 +75,7 @@ def reporter(q):
                                     json.loads(q_mex[0])["latency"], q_mex[1][0]
             print("addr", addr, "status", status)
             if not any(d.address == addr):
+                print("non presente")
                 d = d.append(
                     pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
             else:
