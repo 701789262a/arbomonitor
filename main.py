@@ -68,7 +68,8 @@ def reporter(q):
     while True:
         while not q.empty():
             print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
-            msg = json.loads(q.get())
+            q_mex=q.get()
+            msg = json.loads(q_mex[0])+q_mex[1]
             print(msg)
         time.sleep(1)
 
