@@ -52,25 +52,26 @@ def connection(conn, addr, q):
             conn.send(byt)
             conn.settimeout(3)
             data = conn.recv(1024).decode('utf-8')
+            q.put([data, addr])
         except socket.timeout:
-            data = "{}"
             pass
         except ConnectionResetError:
-            data = "{}"
             pass
         except BrokenPipeError:
-            data = "{}"
             pass
-        q.put([data,addr])
 
 
 def reporter(q):
+    first_time=True
     while True:
         while not q.empty():
-            print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
+            if not first_time:
+                print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
+            first_time=False
             q_mex=q.get()
             msg = str(json.loads(q_mex[0]))+str(q_mex[1])
             print(msg)
+        first_time=True
         time.sleep(1)
 
 
