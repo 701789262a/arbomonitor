@@ -72,11 +72,12 @@ def reporter(q):
             first_time = False
             q_mex = q.get()
             ts, status, lat, addr = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
-                json.loads(q_mex[0])["latency"], q_mex[1][0]
+                                    json.loads(q_mex[0])["latency"], q_mex[1][0]
+            print("addr", addr, "status", status)
             d = d.append(pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
             msg = str(json.loads(q_mex[0])) + str(q_mex[1])
             d[q_mex[1][0]] = str(json.loads(q_mex[0]))
-            #print("prova\t", msg)
+            # print("prova\t", msg)
         print(d)
         first_time = True
         time.sleep(2)
