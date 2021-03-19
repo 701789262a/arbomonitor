@@ -33,6 +33,7 @@ def tcp():
             pass
         try:
             conn, address = s.accept()
+            print("new connection at"+str(address))
             t_c = threading.Thread(target=connection, args=(conn, address, q))
             thread_list.append(t_c)
             thread_list[len(thread_list) - 1].start()
@@ -61,6 +62,7 @@ def connection(conn, addr, q):
             data = "{}"
             pass
         q.put(data)
+        print(q)
 
 
 def reporter(q):
