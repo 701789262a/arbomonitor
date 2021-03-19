@@ -62,13 +62,12 @@ def connection(conn, addr, q):
             data = "{}"
             pass
         q.put(data)
-        print(q)
 
 
 def reporter(q):
     while True:
-        print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
         while not q.empty():
+            print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
             msg = json.loads(q.get())
             print(msg)
         time.sleep(1)
