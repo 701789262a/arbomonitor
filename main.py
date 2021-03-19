@@ -74,9 +74,13 @@ def reporter(q):
             ts, status, lat, addr = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
                                     json.loads(q_mex[0])["latency"], q_mex[1][0]
             print("addr", addr, "status", status)
-            d = d.append(pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
+            if not any(d.address == addr):
+                d = d.append(
+                    pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
+            else:
+                d.loc[d["address"] == addr, ["timestamp", "status", "latency"]] = [ts, status, lat]
             msg = str(json.loads(q_mex[0])) + str(q_mex[1])
-            #d[q_mex[1][0]] = str(json.loads(q_mex[0]))
+            # d[q_mex[1][0]] = str(json.loads(q_mex[0]))
             # print("prova\t", msg)
         print(d)
         first_time = True
