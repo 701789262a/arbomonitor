@@ -75,9 +75,12 @@ def reporter(q):
         print(d)
         print(tabulate(d, headers='keys', tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
-        if d.sort_values("latency")["status"].iloc[0] == "False" and my_ts - int(
-                d.sort_values("latency")["timestamp"].iloc[0]) < 45:
-            print("INVIA RICHIESTA PER DIVENTARE TRADER A %s" % (d.sort_values("latency")["address"].iloc[0]))
+        try:
+            if d.sort_values("latency")["status"].iloc[0] == "False" and my_ts - int(
+                    d.sort_values("latency")["timestamp"].iloc[0]) < 45:
+                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s" % (d.sort_values("latency")["address"].iloc[0]))
+        except IndexError:
+            pass
         time.sleep(1)
 
 
