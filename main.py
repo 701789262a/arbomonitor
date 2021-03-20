@@ -5,9 +5,10 @@ import queue
 import socket
 import threading
 import time
-from tabulate import tabulate
+
 import pandas as pd
 from colorama import Fore, Style
+from tabulate import tabulate
 
 
 def tcp():
@@ -72,15 +73,20 @@ def reporter(q):
                 d.loc[d["address"] == addr, ["timestamp", "status", "latency"]] = [ts, status, lat]
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
+        print(f"{Fore.GREEN}\t\t%d{Style.RESET_ALL}" % (int(datetime.datetime.now(datetime.timezone.utc).timestamp())))
         print(tabulate(d, headers='keys', tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
             if d.sort_values("latency")["status"].iloc[0] == "False" and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
-                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER MIGLIORE LATENZA" % (d.sort_values("latency")["address"].iloc[0]))
+                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER MIGLIORE LATENZA" % (
+                d.sort_values("latency")["address"].iloc[0]))
             if d.sort_values("latency")["status"].iloc[0] == "True" and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) > 45:
-                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (d.sort_values("latency")["address"].iloc[0]))
+                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (
+                d.sort_values("latency")["address"].iloc[0]))
+            print(d.sort_values("latency")["status"].iloc[0],my_ts - int(
+                    d.sort_values("latency")["timestamp"].iloc[0]))
         except IndexError:
             pass
         time.sleep(1)
