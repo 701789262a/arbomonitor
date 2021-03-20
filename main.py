@@ -72,7 +72,6 @@ def reporter(q):
                 d.loc[d["address"] == addr, ["timestamp", "status", "latency"]] = [ts, status, lat]
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
-        print(d)
         print(tabulate(d, headers='keys', tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
