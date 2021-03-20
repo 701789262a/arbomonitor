@@ -1,15 +1,13 @@
+import datetime
 import json
+import os
 import queue
 import socket
 import threading
-import os
 import time
-from multiprocessing.pool import ThreadPool
-
+from tabulate import tabulate
 import pandas as pd
 from colorama import Fore, Style
-
-pool = ThreadPool()
 
 
 def tcp():
@@ -75,6 +73,11 @@ def reporter(q):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
         print(d)
+        print(tabulate(d, headers='keys', tablefmt='psql'))
+        my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+        if d.sort_values("latency")["status"].iloc[0] == "False" and my_ts - int(
+                d.sort_values("latency")["timestamp"].iloc[0]) < 45:
+            print("INVIA RICHIESTA PER DIVENTARE TRADER A %s" % (d.sort_values("latency")["address"].iloc[0]))
         time.sleep(1)
 
 
