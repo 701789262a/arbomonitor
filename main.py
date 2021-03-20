@@ -29,13 +29,13 @@ def tcp():
     t_m.start()
     while True:
         try:
-            serv_conn, serv_addr = service_monitor.accept()
+            serv_conn, serv_address = service_monitor.accept()
         except socket.timeout:
             pass
         try:
             conn, address = s.accept()
             print("new connection at" + str(address))
-            t_c = threading.Thread(target=connection, args=(conn, address, q, d))
+            t_c = threading.Thread(target=connection, args=(conn, address, q))
             thread_list.append(t_c)
             thread_list[len(thread_list) - 1].start()
             n_conn = n_conn + 1
@@ -43,14 +43,14 @@ def tcp():
             pass
 
 
-def connection(conn, addr, q, d):
+def connection(conn, address, q):
     while True:
         try:
             byt = "ok".encode()
             conn.send(byt)
             conn.settimeout(3)
             data = conn.recv(1024).decode('utf-8')
-            q.put([data, addr])
+            q.put([data, address])
         except socket.timeout:
             pass
         except ConnectionResetError:
@@ -64,13 +64,13 @@ def reporter(q):
     while True:
         while not q.empty():
             q_mex = q.get()
-            ts, status, lat, addr = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
+            ts, status, lat, address = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
                                     json.loads(q_mex[0])["latency"], q_mex[1][0]
-            if not any(d.address == addr):
+            if not any(d.address == address):
                 d = d.append(
-                    pd.DataFrame([[addr, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
+                    pd.DataFrame([[address, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
             else:
-                d.loc[d["address"] == addr, ["timestamp", "status", "latency"]] = [ts, status, lat]
+                d.loc[d["address"] == address, ["timestamp", "status", "latency"]] = [ts, status, lat]
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
         print(f"{Fore.GREEN}\t\t%d{Style.RESET_ALL}" % (int(datetime.datetime.now(datetime.timezone.utc).timestamp())))
@@ -81,13 +81,13 @@ def reporter(q):
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
                 print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER MIGLIORE LATENZA" % (
                     d.sort_values("latency")["address"].iloc[0]))
-            if d.sort_values("latency")["status"].iloc[0] and my_ts - int(
+            if d.sort_values("latency")["status"].iloc[0] == "True" and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) > 45:
                 print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (
                     d.sort_values("latency")["address"].iloc[0]))
-
-            print(d.sort_values("latency")["status"].iloc[0],my_ts - int(
-                    d.sort_values("latency")["timestamp"].iloc[0]))
+            print(type(d.sort_values("latency")["status"].iloc[0]))
+            print(d.sort_values("latency")["status"].iloc[0], my_ts - int(
+                d.sort_values("latency")["timestamp"].iloc[0]))
         except IndexError:
             pass
         time.sleep(1)
