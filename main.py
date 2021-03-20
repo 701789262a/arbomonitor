@@ -78,7 +78,10 @@ def reporter(q):
         try:
             if d.sort_values("latency")["status"].iloc[0] == "False" and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
-                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s" % (d.sort_values("latency")["address"].iloc[0]))
+                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER MIGLIORE LATENZA" % (d.sort_values("latency")["address"].iloc[0]))
+            if d.sort_values("latency")["status"].iloc[0] == "True" and my_ts - int(
+                    d.sort_values("latency")["timestamp"].iloc[0]) > 45:
+                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (d.sort_values("latency")["address"].iloc[0]))
         except IndexError:
             pass
         time.sleep(1)
