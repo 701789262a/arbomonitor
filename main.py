@@ -33,7 +33,6 @@ def tcp():
             pass
         try:
             conn, address = s.accept()
-            print("new connection at" + str(address))
             t_c = threading.Thread(target=connection, args=(conn, address, q))
             thread_list.append(t_c)
             thread_list[len(thread_list) - 1].start()
@@ -73,13 +72,12 @@ def reporter(q):
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
         print(f"{Fore.GREEN}\t%d{Style.RESET_ALL}" % (int(datetime.datetime.now(datetime.timezone.utc).timestamp())))
-        print(tabulate(d, headers='keys', tablefmt='psql'))
+        print(tabulate(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False), headers='keys',
+                       tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
             if (not d.sort_values("latency")["status"].iloc[0]) and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
-                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER MIGLIORE LATENZA" % (
-                    d.sort_values("latency")["address"].iloc[0]))
                 # STOP QUELLO TRUE, PRESO SORTANDO IL DATAFRAME PER IL TRUE (CHE DOVREBBE ESSERE UNO)
                 # AVVIA IL SOCKET PRESO IN CONSIDERAZIONE, OTTENUTO SORTANDO PER LATENCY E PRENDENDO L ADDRESS
                 ans = (say(d.sort_values("status", ascending=False)["address"].iloc[0], "STOP"),
@@ -87,8 +85,6 @@ def reporter(q):
                 print("ANSW = ", ans)
             if d.sort_values("latency")["status"].iloc[0] and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) > 45:
-                print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (
-                    d.sort_values(["status", "latency"], ascending=[True, True])["address"].iloc[0]))
                 # PRENDI IL SERVER UP CON LATENZA MIGLIORE E INVIAGLI UN GO
                 # AL SERVER IN QUESTIONE NELL IF BISOGNA INVIARE PREVENTIVAMENTE UN SEGNALE DI STOP
                 ans = (say(d.sort_values(["status", "latency"], ascending=[True, True])["address"].iloc[0], "GO"),
