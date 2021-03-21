@@ -93,6 +93,8 @@ def reporter(q):
                 # AL SERVER IN QUESTIONE NELL IF BISOGNA INVIARE PREVENTIVAMENTE UN SEGNALE DI STOP
                 say(d.sort_values("latency")["address"].iloc[0], "STOP")
 
+                #SETTARE BENE I VALORI RESTITUITI DALLA FUNZIONE SAY (MATCH CASE PER OGNI TIPO DI RETURN 0, 1, 2)
+
         except IndexError:
             pass
         time.sleep(5)
@@ -103,11 +105,14 @@ def say(address, msg):
     say_socket.settimeout(5)
     try:
         say_socket.connect((address, 31000))
+    except ConnectionRefusedError:
+        return 1
+    try:
         say_socket.sendall(msg.encode())
         say_socket.close()
     except socket.timeout:
-        return False
-    return True
+        return 2
+    return 0
 
 if __name__ == '__main__':
     tcp()
