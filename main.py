@@ -88,10 +88,10 @@ def reporter(q):
             if d.sort_values("latency")["status"].iloc[0] and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) > 45:
                 print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (
-                    d.sort_values(["status", "latency"], ascending=[False, True])["address"].iloc[0]))
+                    d.sort_values(["status", "latency"], ascending=[True, True])["address"].iloc[0]))
                 # PRENDI IL SERVER UP CON LATENZA MIGLIORE E INVIAGLI UN GO
                 # AL SERVER IN QUESTIONE NELL IF BISOGNA INVIARE PREVENTIVAMENTE UN SEGNALE DI STOP
-                ans = (say(d.sort_values(["status", "latency"], ascending=[False, True])["address"].iloc[0], "GO"),
+                ans = (say(d.sort_values(["status", "latency"], ascending=[True, True])["address"].iloc[0], "GO"),
                        say(d.sort_values("latency")["address"].iloc[0], "STOP"))
                 print("ANSW = ", ans)
                 # SETTARE BENE I VALORI RESTITUITI DALLA FUNZIONE SAY (MATCH CASE PER OGNI TIPO DI RETURN 0, 1, 2)
