@@ -58,17 +58,18 @@ def connection(conn, address, q):
 
 
 def reporter(q):
-    d = pd.DataFrame(columns=["address", "timestamp", "status", "latency"])
+    d = pd.DataFrame(columns=["address", "name", "timestamp", "status", "latency"])
     while True:
         while not q.empty():
             q_mex = q.get()
-            ts, status, lat, address = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
-                                       json.loads(q_mex[0])["latency"], q_mex[1][0]
+            ts, status, lat, address, name = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
+                                             json.loads(q_mex[0])["latency"], q_mex[1][0], json.loads(q_mex[0])["name"]
             if not any(d.address == address):
                 d = d.append(
-                    pd.DataFrame([[address, ts, status, lat]], columns=["address", "timestamp", "status", "latency"]))
+                    pd.DataFrame([[address, name, ts, status, lat]],
+                                 columns=["address", "name", "timestamp", "status", "latency"]))
             else:
-                d.loc[d["address"] == address, ["timestamp", "status", "latency"]] = [ts, status, lat]
+                d.loc[d["address"] == address, ["name", "timestamp", "status", "latency"]] = [name, ts, status, lat]
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
         print(f"{Fore.GREEN}\t%d{Style.RESET_ALL}" % (int(datetime.datetime.now(datetime.timezone.utc).timestamp())))
@@ -91,9 +92,11 @@ def reporter(q):
                        say(d.sort_values("latency")["address"].iloc[0], "STOP"))
                 print("ANSW = ", ans)
                 # SETTARE BENE I VALORI RESTITUITI DALLA FUNZIONE SAY (MATCH CASE PER OGNI TIPO DI RETURN 0, 1, 2)
-
         except IndexError:
             pass
+        if d.isin(["*"]).sum(0).sum() > 1:
+            say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1], "STOP")
+
         time.sleep(5)
 
 
