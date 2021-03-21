@@ -12,10 +12,9 @@ from tabulate import tabulate
 
 
 def tcp():
-    port = 30630
     thread_list = []
     s = socket.socket()
-    s.bind(("0.0.0.0", port))
+    s.bind(("0.0.0.0", 30630))
     s.settimeout(0.01)
     s.listen(5)
     service_monitor = socket.socket()
@@ -65,33 +64,50 @@ def reporter(q):
         while not q.empty():
             q_mex = q.get()
             ts, status, lat, address = json.loads(q_mex[0])["timestamp"], json.loads(q_mex[0])["status"], \
-                                    json.loads(q_mex[0])["latency"], q_mex[1][0]
+                                       json.loads(q_mex[0])["latency"], q_mex[1][0]
             if not any(d.address == address):
                 d = d.append(
-                    pd.DataFrame([[address, ts, lat, status]], columns=["address", "timestamp", "status", "latency"]))
+                    pd.DataFrame([[address, ts, status, lat]], columns=["address", "timestamp", "status", "latency"]))
             else:
                 d.loc[d["address"] == address, ["timestamp", "status", "latency"]] = [ts, status, lat]
         os.system('cls' if os.name == 'nt' else 'clear')
         print(f"{Fore.YELLOW}ARBOMONITOR [] MURINEDDU CAPITAL, 2021{Style.RESET_ALL}")
-        print(f"{Fore.GREEN}\t\t%d{Style.RESET_ALL}" % (int(datetime.datetime.now(datetime.timezone.utc).timestamp())))
+        print(f"{Fore.GREEN}\t%d{Style.RESET_ALL}" % (int(datetime.datetime.now(datetime.timezone.utc).timestamp())))
         print(tabulate(d, headers='keys', tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
-            if d.sort_values("latency")["status"].iloc[0] == "False" and my_ts - int(
+            if (not d.sort_values("latency")["status"].iloc[0]) and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
                 print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER MIGLIORE LATENZA" % (
                     d.sort_values("latency")["address"].iloc[0]))
-            if d.sort_values("latency")["status"].iloc[0] == "True" and my_ts - int(
+                # STOP QUELLO TRUE, PRESO SORTANDO IL DATAFRAME PER IL TRUE (CHE DOVREBBE ESSERE UNO)
+                say(d.sort_values("status", ascending=False)["address"].iloc[0], "STOP")
+                # AVVIA IL SOCKET PRESO IN CONSIDERAZIONE, OTTENUTO SORTANDO PER LATENCY E PRENDENDO L ADDRESS
+                say(d.sort_values("latency")["address"].iloc[0], "GO")
+            if d.sort_values("latency")["status"].iloc[0] and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) > 45:
                 print("INVIA RICHIESTA PER DIVENTARE TRADER A %s PER DOWNTIME SERVER MIGLIORE" % (
                     d.sort_values("latency")["address"].iloc[0]))
-            print(type(d.sort_values("latency")["status"].iloc[0]))
-            print(d.sort_values("latency")["status"].iloc[0], my_ts - int(
-                d.sort_values("latency")["timestamp"].iloc[0]))
+                # PRENDI IL SERVER UP CON LATENZA MIGLIORE E INVIAGLI UN GO
+                say(d.sort_values(["status", "latency"], ascending=[False, True])["address"].iloc[0], "GO")
+                # AL SERVER IN QUESTIONE NELL IF BISOGNA INVIARE PREVENTIVAMENTE UN SEGNALE DI STOP
+                say(d.sort_values("latency")["address"].iloc[0], "STOP")
+
         except IndexError:
             pass
-        time.sleep(1)
+        time.sleep(5)
 
+
+def say(address, msg):
+    say_socket = socket.socket()
+    say_socket.settimeout(5)
+    try:
+        say_socket.connect((address, 31000))
+        say_socket.sendall(msg.encode())
+        say_socket.close()
+    except socket.timeout:
+        return False
+    return True
 
 if __name__ == '__main__':
     tcp()
