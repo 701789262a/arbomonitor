@@ -94,8 +94,8 @@ def reporter(q):
                 # SETTARE BENE I VALORI RESTITUITI DALLA FUNZIONE SAY (MATCH CASE PER OGNI TIPO DI RETURN 0, 1, 2)
         except IndexError:
             pass
-        print(d.isin(["*"]).sum().sum())
-        if d.isin(["*"]).sum().sum() > 1:
+        print(d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum())
+        if d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum() > 1:
             say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1], "STOP")
 
         time.sleep(5)
