@@ -97,7 +97,8 @@ def reporter(q):
         print(d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum())
         if d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum() > 1:
             say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1], "STOP")
-
+        if d.sort_values("status", ascending=False).iloc[1]["status"]:
+            say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1], "STOP")
         time.sleep(5)
 
 
