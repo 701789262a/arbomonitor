@@ -92,13 +92,16 @@ def reporter(q):
                        say(d.sort_values("latency")["address"].iloc[0], "STOP"))
                 print("ANSW = ", ans)
                 # SETTARE BENE I VALORI RESTITUITI DALLA FUNZIONE SAY (MATCH CASE PER OGNI TIPO DI RETURN 0, 1, 2)
+            print(d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum())
+            if d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum() > 1:
+                say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1],
+                    "STOP")
+            if d.sort_values("status", ascending=False).iloc[1]["status"]:
+                say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1],
+                    "STOP")
         except IndexError:
             pass
-        print(d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum())
-        if d.replace([True, False], ["*", ""]).isin(["*"]).sum().sum() > 1:
-            say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1], "STOP")
-        if d.sort_values("status", ascending=False).iloc[1]["status"]:
-            say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1], "STOP")
+
         time.sleep(5)
 
 
