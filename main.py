@@ -107,6 +107,8 @@ def say(address, msg):
         say_socket.connect((address, 31000))
     except ConnectionRefusedError:
         return 1
+    except socket.timeout:
+        return 3
     try:
         say_socket.sendall(msg.encode())
         say_socket.close()
