@@ -118,7 +118,8 @@ def reporter(q):
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1],
                     "STOP")
             if command:
-                index, com = command.split("~")
+                com,index = command.split("~")
+                print(com,index)
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[int(index)],
                     "command:" + com)
                 command = ""
