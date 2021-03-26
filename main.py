@@ -89,15 +89,15 @@ def reporter(q):
             print("e vuota?",not q_key.empty())
             if not q_key.empty:
                 print("ciao")
-                print(q_key.get())
-                keythread.join()
-                if q_key.get() == "KEY_F(1)":
-                    inp = input("F1: Send command to server (command ~ index)")
-                    command = inp
-                    with q.mutex:
-                        q.queue.clear()
-                keythread = Thread(target=keypress, args=(q_key,))
-                keythread.start()
+                #print(q_key.get())
+                #keythread.join()
+                #if q_key.get() == "KEY_F(1)":
+                #    inp = input("F1: Send command to server (command ~ index)")
+                #    command = inp
+                #    with q.mutex:
+                #        q.queue.clear()
+                #keythread = Thread(target=keypress, args=(q_key,))
+                #keythread.start()
             if (not d.sort_values("latency")["status"].iloc[0]) and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
                 # STOP QUELLO TRUE, PRESO SORTANDO IL DATAFRAME PER IL TRUE (CHE DOVREBBE ESSERE UNO)
