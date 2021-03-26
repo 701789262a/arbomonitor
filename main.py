@@ -125,10 +125,10 @@ def reporter(q):
                         q.queue.clear()
                 keythread = Thread(target=keypress, args=(q_key,))
                 keythread.start()
-            time.sleep(5)
+
         except IndexError:
             pass
-
+        time.sleep(5)
 
 
 def say(address, msg):
