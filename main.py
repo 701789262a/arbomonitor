@@ -114,9 +114,9 @@ def reporter(q):
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[index],
                     "command:" + com)
                 command = ""
-            print(q_key.get())
+            print(q_key.empty())
             if not q_key.empty:
-                print("ciaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociaociao")
+                print("ciao")
                 keythread.join()
                 print(q_key.get())
                 if q_key.get() == "KEY_F(1)":
