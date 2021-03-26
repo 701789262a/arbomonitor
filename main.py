@@ -114,6 +114,7 @@ def reporter(q):
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[index],
                     "command:" + com)
                 command = ""
+            print(q_key.get())
             if not q_key.empty:
                 print("ciao")
                 keythread.join()
