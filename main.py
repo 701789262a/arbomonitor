@@ -86,10 +86,7 @@ def reporter(q):
                        tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
-            print("e vuota?",not q_key.empty())
             if not q_key.empty():
-                print("ciao")
-                print(q_key.get())
                 keythread.join()
                 if q_key.get() == "KEY_F(1)":
                     inp = input("F1: Send command to server (command ~ index)")
