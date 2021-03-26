@@ -118,9 +118,9 @@ def reporter(q):
         except IndexError:
             pass
         if not q_key.empty:
+            print("ciao")
             keythread.join()
             print(q_key.get())
-            print("ciao")
             if q_key.get() == "KEY_F(1)":
                 inp = input("F1: Send command to server (command ~ index)")
                 command = inp
