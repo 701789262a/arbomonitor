@@ -150,6 +150,7 @@ def keypress(q):
     with Input(keynames='curses') as input_generator:
         for e in input_generator:
             q.put(repr(e))
+            print("keypress")
             break
 
 
