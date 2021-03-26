@@ -3,11 +3,13 @@ import json
 import os
 import queue
 import socket
-import threading
-import time
 import sys
+import time
+from threading import Thread
+
 import pandas as pd
 from colorama import Fore, Style
+from curtsies import Input
 from tabulate import tabulate
 
 
@@ -24,7 +26,7 @@ def tcp():
     q = queue.Queue()
     d = dict()
     n_conn = 0
-    t_m = threading.Thread(target=reporter, args=(q,))
+    t_m = Thread(target=reporter, args=(q,))
     t_m.start()
     try:
         while True:
@@ -34,7 +36,7 @@ def tcp():
                 pass
             try:
                 conn, address = s.accept()
-                t_c = threading.Thread(target=connection, args=(conn, address, q))
+                t_c = Thread(target=connection, args=(conn, address, q))
                 thread_list.append(t_c)
                 thread_list[len(thread_list) - 1].start()
                 n_conn = n_conn + 1
@@ -61,6 +63,8 @@ def connection(conn, address, q):
 
 
 def reporter(q):
+    command = ""
+    q_key = queue.Queue()
     d = pd.DataFrame(columns=["address", "name", "timestamp", "status", "latency"])
     while True:
         while not q.empty():
@@ -102,10 +106,22 @@ def reporter(q):
             if d.sort_values("status", ascending=False).iloc[1]["status"]:
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1],
                     "STOP")
+
+            if command:
+                index, com = command.split("~")
+                say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[index],
+                    "command:" + com)
+                command = ""
+
         except IndexError:
             pass
-
+        keythread = Thread(target=keypress, args=(q_key,))
+        keythread.start()
         time.sleep(5)
+        keythread.join()
+        if q_key.get() == "'KEY_F(1)'":
+            inp = input()
+            command = inp
 
 
 def say(address, msg):
@@ -123,6 +139,13 @@ def say(address, msg):
     except socket.timeout:
         return 2
     return 0
+
+
+def keypress(q):
+    with Input(keynames='curses') as input_generator:
+        for e in input_generator:
+            q.put(repr(e))
+            break
 
 
 if __name__ == '__main__':
