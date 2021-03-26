@@ -86,6 +86,18 @@ def reporter(q):
                        tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
+            print(q_key.empty())
+            if not q_key.empty:
+                print("ciao")
+                keythread.join()
+                print(q_key.get())
+                if q_key.get() == "KEY_F(1)":
+                    inp = input("F1: Send command to server (command ~ index)")
+                    command = inp
+                    with q.mutex:
+                        q.queue.clear()
+                keythread = Thread(target=keypress, args=(q_key,))
+                keythread.start()
             if (not d.sort_values("latency")["status"].iloc[0]) and my_ts - int(
                     d.sort_values("latency")["timestamp"].iloc[0]) < 45:
                 # STOP QUELLO TRUE, PRESO SORTANDO IL DATAFRAME PER IL TRUE (CHE DOVREBBE ESSERE UNO)
@@ -114,18 +126,6 @@ def reporter(q):
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[index],
                     "command:" + com)
                 command = ""
-            print(q_key.empty())
-            if not q_key.empty:
-                print("ciao")
-                keythread.join()
-                print(q_key.get())
-                if q_key.get() == "KEY_F(1)":
-                    inp = input("F1: Send command to server (command ~ index)")
-                    command = inp
-                    with q.mutex:
-                        q.queue.clear()
-                keythread = Thread(target=keypress, args=(q_key,))
-                keythread.start()
 
         except IndexError:
             pass
