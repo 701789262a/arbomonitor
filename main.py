@@ -119,7 +119,8 @@ def reporter(q):
             pass
         if not q_key.empty:
             keythread.join()
-            print(q.get())
+            print(q_key.get())
+            print("ciao")
             if q_key.get() == "KEY_F(1)":
                 inp = input("F1: Send command to server (command ~ index)")
                 command = inp
@@ -147,10 +148,10 @@ def say(address, msg):
     return 0
 
 
-def keypress(q):
+def keypress(q_key):
     with Input(keynames='curses') as input_generator:
         for e in input_generator:
-            q.put(e)
+            q_key.put(e)
             print("keypress")
             break
 
