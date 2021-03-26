@@ -89,7 +89,7 @@ def reporter(q):
             if not q_key.empty():
                 keythread.join()
                 if q_key.get() == "KEY_F(1)":
-                    inp = input("F1: Send command to server (command ~ index)")
+                    inp = input("F1: Send command to server (command ~ index): ")
                     command = inp
                     with q.mutex:
                         q.queue.clear()
@@ -119,10 +119,9 @@ def reporter(q):
                     "STOP")
             if command:
                 index, com = command.split("~")
-                say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[index],
+                say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[int(index)],
                     "command:" + com)
                 command = ""
-
         except IndexError:
             pass
         time.sleep(5)
@@ -149,7 +148,6 @@ def keypress(q_key):
     with Input(keynames='curses') as input_generator:
         for e in input_generator:
             q_key.put(e)
-            print("keypress")
             break
 
 
