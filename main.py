@@ -123,6 +123,8 @@ def reporter(q):
             if q_key.get() == "'KEY_F(1)'":
                 inp = input()
                 command = inp
+                with q.mutex:
+                    q.queue.clear()
 
 
 def say(address, msg):
