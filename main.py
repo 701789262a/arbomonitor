@@ -86,7 +86,7 @@ def reporter(q):
                        tablefmt='psql'))
         my_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         try:
-            print("e vuota?",q_key.empty())
+            print("e vuota?",not q_key.empty())
             if not q_key.empty:
                 print("ciao")
                 print(q_key.get())
@@ -120,7 +120,6 @@ def reporter(q):
             if d.sort_values("status", ascending=False).iloc[1]["status"]:
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[1],
                     "STOP")
-
             if command:
                 index, com = command.split("~")
                 say(d.replace([True, False], ["*", ""]).sort_values("status", ascending=False)["address"].iloc[index],
