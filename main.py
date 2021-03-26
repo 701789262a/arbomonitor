@@ -65,6 +65,8 @@ def connection(conn, address, q):
 def reporter(q):
     command = ""
     q_key = queue.Queue()
+    keythread = Thread(target=keypress, args=(q_key,))
+    keythread.start()
     d = pd.DataFrame(columns=["address", "name", "timestamp", "status", "latency"])
     while True:
         while not q.empty():
@@ -115,16 +117,16 @@ def reporter(q):
 
         except IndexError:
             pass
-        keythread = Thread(target=keypress, args=(q_key,))
-        keythread.start()
-        time.sleep(5)
-        keythread.join()
         if not q_key.empty:
+            keythread.join()
             if q_key.get() == "'KEY_F(1)'":
-                inp = input()
+                inp = input("F1: Send command to server (command ~ index)")
                 command = inp
                 with q.mutex:
                     q.queue.clear()
+            keythread = Thread(target=keypress, args=(q_key,))
+            keythread.start()
+        time.sleep(5)
 
 
 def say(address, msg):
