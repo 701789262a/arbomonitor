@@ -119,6 +119,7 @@ def reporter(q):
             pass
         if not q_key.empty:
             keythread.join()
+            print(q.get())
             if q_key.get() == "'KEY_F(1)'":
                 inp = input("F1: Send command to server (command ~ index)")
                 command = inp
