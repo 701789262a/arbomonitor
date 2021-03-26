@@ -5,7 +5,7 @@ import queue
 import socket
 import threading
 import time
-
+import sys
 import pandas as pd
 from colorama import Fore, Style
 from tabulate import tabulate
@@ -26,19 +26,22 @@ def tcp():
     n_conn = 0
     t_m = threading.Thread(target=reporter, args=(q,))
     t_m.start()
-    while True:
-        try:
-            serv_conn, serv_address = service_monitor.accept()
-        except socket.timeout:
-            pass
-        try:
-            conn, address = s.accept()
-            t_c = threading.Thread(target=connection, args=(conn, address, q))
-            thread_list.append(t_c)
-            thread_list[len(thread_list) - 1].start()
-            n_conn = n_conn + 1
-        except socket.timeout:
-            pass
+    try:
+        while True:
+            try:
+                serv_conn, serv_address = service_monitor.accept()
+            except socket.timeout:
+                pass
+            try:
+                conn, address = s.accept()
+                t_c = threading.Thread(target=connection, args=(conn, address, q))
+                thread_list.append(t_c)
+                thread_list[len(thread_list) - 1].start()
+                n_conn = n_conn + 1
+            except socket.timeout:
+                pass
+    except KeyboardInterrupt:
+        sys.exit(0)
 
 
 def connection(conn, address, q):
