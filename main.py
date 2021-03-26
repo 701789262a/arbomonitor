@@ -119,9 +119,10 @@ def reporter(q):
         keythread.start()
         time.sleep(5)
         keythread.join()
-        if q_key.get() == "'KEY_F(1)'":
-            inp = input()
-            command = inp
+        if not q_key.empty:
+            if q_key.get() == "'KEY_F(1)'":
+                inp = input()
+                command = inp
 
 
 def say(address, msg):
